@@ -1,4 +1,4 @@
-name: Crawl Toutiao Hot News
+name: News Crawler Workflow
 
 on:
   schedule:
@@ -6,8 +6,10 @@ on:
   workflow_dispatch:  # 允许手动触发
 
 jobs:
-  build:
+  crawl:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -16,32 +18,32 @@ jobs:
       uses: actions/setup-python@v5
       with:
         python-version: '3.10'
+        cache: 'pip'
         
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests beautifulsoup4 pandas
+        pip install -r crawl/requirements.txt
         
-    - name: Run crawler
+    - name: Run crawlers
       run: |
         cd crawl
         python toutiao_crawler.py
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        python bing_crawler.py
         
-    - name: Commit and push
+    - name: Commit and push changes
+      if: success()
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         
-        # 检查news_data目录是否存在并且有文件
-        if [ -d "crawl/news_data" ] && [ "$(ls -A crawl/news_data)" ]; then
-          echo "Changes detected. Committing and pushing..."
+        # 检查是否有文件变更
+        if [ -n "$(git status --porcelain crawl/news_data)" ]; then
           git add crawl/news_data/
-          git commit -m "Update Toutiao hot news data"
+          git commit -m "Update news data [skip ci]"
           git push
         else
-          echo "No changes or news_data directory is empty"
+          echo "No changes detected"
         fi
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
