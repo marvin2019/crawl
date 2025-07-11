@@ -60,7 +60,7 @@ def save_news(news_list):
     
     # 使用当前日期时间作为文件名
     timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
-    file_path = os.path.join(data_dir, f"{timestamp}.json")
+    file_path = os.path.join(data_dir, f"头条_{timestamp}.json")
     
     try:
         with open(file_path, "w", encoding="utf-8") as f:
