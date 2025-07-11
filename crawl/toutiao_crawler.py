@@ -55,11 +55,12 @@ def save_news(news_list):
         return
     
     # 创建存储目录（如果不存在）
-    os.makedirs("news_data", exist_ok=True)
+    data_dir = os.path.join(os.path.dirname(__file__), "news_data")
+    os.makedirs(data_dir, exist_ok=True)
     
-    # 使用当前日期作为文件名
-    today = datetime.now().strftime("%Y-%m-%d")
-    file_path = os.path.join("news_data", f"{today}.json")
+    # 使用当前日期时间作为文件名
+    timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+    file_path = os.path.join(data_dir, f"{timestamp}.json")
     
     try:
         with open(file_path, "w", encoding="utf-8") as f:
