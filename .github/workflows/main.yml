@@ -26,15 +26,22 @@ jobs:
       run: |
         cd crawl
         python toutiao_crawler.py
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Commit and push
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add data/
-        if git diff --staged --quiet; then
-          echo "No changes to commit"
-        else
+        
+        # 检查news_data目录是否存在并且有文件
+        if [ -d "crawl/news_data" ] && [ "$(ls -A crawl/news_data)" ]; then
+          echo "Changes detected. Committing and pushing..."
+          git add crawl/news_data/
           git commit -m "Update Toutiao hot news data"
           git push
-        fi    
+        else
+          echo "No changes or news_data directory is empty"
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
