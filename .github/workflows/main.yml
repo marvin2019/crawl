@@ -2,7 +2,7 @@ name: News Crawler Workflow
 
 on:
   schedule:
-    - cron: '0 14 * * *'  # 每天UTC 14:00执行（北京时间晚上22:00）
+    - cron: '20 4 * * *'  # 每天UTC 14:00执行（北京时间晚上22:00）
   workflow_dispatch:  # 允许手动触发
     push:
     branches: [ main ]
